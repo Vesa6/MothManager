@@ -1,48 +1,28 @@
-// src/Dashboard.tsx
 import React, { useState } from 'react';
-import { Link } from '../Interfaces/Link';
+import ProjectList from './ProjectList';
+import ProjectDetails from './ProjectDetails';
+import { projects } from '../data';
+import { Project } from '../types';
 
 const Dashboard: React.FC = () => {
-    const [links, setLinks] = useState<Link[]>([]);
-    const [url, setUrl] = useState<string>('');
-    const [description, setDescription] = useState<string>('');
+    const [selectedProject, setSelectedProject] = useState<Project | null>(null);
 
-    const handleAddLink = () => {
-        const newLink: Link = {
-            id: links.length + 1, // Simple ID assignment
-            url: url,
-            description: description
-        };
-        setLinks([...links, newLink]);
-        setUrl(''); // Reset the input field
-        setDescription(''); // Reset the input field
+    const handleSelectProject = (project: Project) => {
+        setSelectedProject(project);
     };
 
     return (
-        <div>
-            <h1>Project Links Dashboard</h1>
-            <div>
-                <input
-                    type="text"
-                    placeholder="Enter URL"
-                    value={url}
-                    onChange={e => setUrl(e.target.value)}
-                />
-                <input
-                    type="text"
-                    placeholder="Description"
-                    value={description}
-                    onChange={e => setDescription(e.target.value)}
-                />
-                <button onClick={handleAddLink}>Add Link</button>
+        <div className="flex w-full h-screen">
+            <div className="sidebar w-1/4 bg-blue-700 text-white p-4 overflow-auto">
+                <ProjectList projects={projects} onSelect={handleSelectProject} />
             </div>
-            <ul>
-                {links.map(link => (
-                    <li key={link.id}>
-                        <a href={link.url} target="_blank" rel="noopener noreferrer">{link.description}</a>
-                    </li>
-                ))}
-            </ul>
+            <div className="content flex-1 bg-gray-100 p-4 overflow-auto">
+                {selectedProject ? (
+                    <ProjectDetails project={selectedProject} />
+                ) : (
+                    <p className="text-center text-gray-500">Please select a project</p>
+                )}
+            </div>
         </div>
     );
 };
